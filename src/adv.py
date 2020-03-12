@@ -1,7 +1,23 @@
 from room import Room
+from player import Player
+from item import Item, Food, Egg
+import os
+os.system('cls' if os.name == 'nt' else 'clear')
+
+# Make a new player object that is currently in the 'outside' room.
+
+# Write a loop that:
+#
+# * Prints the current room name
+# * Prints the current description (the textwrap module might be useful here).
+# * Waits for user input and decides what to do.
+#
+# If the user enters a cardinal direction, attempt to move to the room there.
+# Print an error message if the movement isn't allowed.
+#
+# If the user enters "q", quit the game.
 
 # Declare all the rooms
-
 room = {
     'outside':  Room("Outside Cave Entrance",
                      "North of you, the cave mount beckons"),
@@ -21,9 +37,7 @@ chamber! Sadly, it has already been completely emptied by
 earlier adventurers. The only exit is to the south."""),
 }
 
-
 # Link rooms together
-
 room['outside'].n_to = room['foyer']
 room['foyer'].s_to = room['outside']
 room['foyer'].n_to = room['overlook']
@@ -33,19 +47,38 @@ room['narrow'].w_to = room['foyer']
 room['narrow'].n_to = room['treasure']
 room['treasure'].s_to = room['narrow']
 
-#
-# Main
-#
+# Add items to rooms
+room['outside'].items.append(
+    Item('torch', 'could be your only source of light, if things get dark...'))
+room['foyer'].items.append(Item(
+    'sword', 'The sword of Gryffindor absorbs any substance that will strengthen it. Only a True Gryffindor can weild'))
+room['overlook'].items.append(Item(
+    'binoculars', 'used to gaze off into the distance, sees things unseen by the natural eye'))
+room['narrow'].items.append(Item(
+    'magazine', 'a classic Avengers comic book, labeled Earths Mightiest Heroes'))
+room['treasure'].items.append(Item(
+    'diamond', 'what is this?? Looks like a diamond was left behind in the dark corner...ps can only see if carrying torch'))
 
-# Make a new player object that is currently in the 'outside' room.
+# Add food to rooms
 
-# Write a loop that:
-#
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
+
+sandwich = Food("sandwich", "This is a delicious sandwich.", 100)
+egg = Egg()
+
+player = Player(input('Please enter your name: '), room['outside'])
+print(player.current_room)
+player.items.append(sandwich)
+
+valid_directions = ("n", "s", "e", "w")
+
+while True:
+    cmd = input("\n---->")
+    if cmd == "q":
+        print("Goodbye!")
+        exit(0)
+    elif cmd in valid_directions:
+        player.travel(cmd)
+    elif cmd == "i":
+        player.print_inventory()
+    else:
+        print("I did not understand that command")
